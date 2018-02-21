@@ -28,10 +28,6 @@ Example:
 package main
 
 import (
-	"os"
-	"fmt"
-	"flag"
-
 	log "github.com/sirupsen/logrus"
 	wrapped "github.com/michele/logrus-wrapped-json"
 )
