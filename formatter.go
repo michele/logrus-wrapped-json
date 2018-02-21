@@ -46,11 +46,14 @@ type FieldMap map[fieldKey]string
 func (f *WrappedJSONFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	wrp := wrapper{}
 	var wrapKey string
+	var preserveKind bool
 	kind, ok := entry.Data["kind"]
 	if ok {
 		wrapKey, ok = kind.(string)
 		if !ok {
 			wrapKey = defaultKind
+		} else {
+			preserveKind = true
 		}
 		delete(entry.Data, "kind")
 	} else {
@@ -83,6 +86,9 @@ func (f *WrappedJSONFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	serialized, err := json.Marshal(wrp)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
+	}
+	if preserveKind {
+		entry.Data["kind"] = wrapKey
 	}
 	return append(serialized, '\n'), nil
 }
